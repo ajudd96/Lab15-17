@@ -9,16 +9,16 @@ module IDEX_reg(
 //				Control Lines;
 					ID_RegWrite,
 					ID_CondMov,
-					// MemtoReg,
-					// MemWrite,
-					// MemRead,
+					MemtoReg,
+					MemWrite,
+					MemRead,
 					ID_RegDst,
 					ID_ALUOp,
 					ID_ALUSrc1,
 					ID_ALUSrc2,
 
 //				Data lines;
-					// ID_PCAddResult,
+					ID_PCAddResult,
 					ID_ReadData1,
 					ID_ReadData2,
 					ID_immExt,
@@ -32,16 +32,16 @@ module IDEX_reg(
 //				Control Lines;
 					EX_RegWrite,
 					EX_CondMov,
-					// EX_MemtoReg,
-					// EX_MemWrite,
-					// EX_MemRead,
+					EX_MemtoReg,
+					EX_MemWrite,
+					EX_MemRead,
 					EX_RegDst,
 					EX_ALUOp,
 					EX_ALUSrc1,
 					EX_ALUSrc2,
 					
 //				Data lines;
-					// EX_PCAddResult,
+					EX_PCAddResult,
 					EX_ReadData1,
 					EX_ReadData2,
 					EX_immExt,
@@ -67,16 +67,16 @@ always @(posedge Clk) begin
 	
 	// Controls
 	EX_RegWrite <= ID_RegWrite;
-	// EX_MemtoReg <= MemtoReg;
-	// EX_MemWrite <= MemWrite;
-	// EX_MemRead <= MemRead;
+	EX_MemtoReg <= MemtoReg;
+	EX_MemWrite <= MemWrite;
+	EX_MemRead <= MemRead;
 	EX_RegDst <= ID_RegDst;
 	EX_ALUSrc1 <= ID_ALUSrc1;
 	EX_ALUSrc2 <= ID_ALUSrc2;
 	EX_ALUOp <= ID_ALUOp;
     EX_CondMov <= ID_CondMov;
 	// Data
-	// EX_PCAddResult <= ID_PCAddResult;
+	EX_PCAddResult <= ID_PCAddResult;
 	EX_ReadData1 <= ID_ReadData1;
 	EX_ReadData2 <= ID_ReadData2;
 	EX_immExt <= ID_immExt;
