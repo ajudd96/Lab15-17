@@ -18,11 +18,11 @@ module IFID_reg(
 					ID_Instruction );
 					
 
-input Clk;
-// input wire [31:0] PCAddResult;
+input Clk;  
+input wire [31:0] PCAddResult;
 input wire [31:0] IF_Instruction;
 
-// output reg [31:0] ID_PCAddResult;
+output reg [31:0] ID_PCAddResult;
 output reg [31:0] ID_Instruction;
 
 always @(posedge Clk) begin
