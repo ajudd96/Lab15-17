@@ -7,14 +7,14 @@ module IFID_reg(
 
 //			To Pass through:
 //				Data lines;
-					// PCAddResult,
+					PCAddResult,
 					IF_Instruction,
 
 
 //		outputs
 //			To Pass through:
 //				Data lines;
-					// ID_PCAddResult,
+					ID_PCAddResult,
 					ID_Instruction );
 					
 
@@ -28,7 +28,7 @@ output reg [31:0] ID_Instruction;
 always @(posedge Clk) begin
 	
 	// Data
-	// ID_PCAddResult <= PCAddResult;
+	ID_PCAddResult <= PCAddResult;
 	ID_Instruction <= IF_Instruction;
 	
 end
