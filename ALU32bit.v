@@ -123,12 +123,12 @@ module ALU32Bit(ALUControl, A, B, Temp_ALUResult, Temp_Zero, Hi, Lo, Temp_64bit_
 			
 			// Comparison - 
 			//			ALUResult = 1 when branch condition not met
-			BEQ: begin if(!(A == B)) ALUResult <= 32'h1; end
-			BGTZ: begin if(A[31] || (A != 0)) ALUResult <= 32'h1; end
-			BGEZ: begin if(!A[31]) ALUResult <= 32'h1; end 
-			BLEZ: begin if(!(A[31] || (A == 0))) ALUResult <= 32'h1; end
-			BLTZ: begin if(!(A[31])) ALUResult <= 32'h1; end
-			BNE: begin if(!(A != B)) ALUResult <= 32'h1; end
+			BEQ: begin if(!(A == B)) Temp_ALUResult <= 32'h1; end
+			BGTZ: begin if(A[31] || (A != 0)) Temp_ALUResult <= 32'h1; end
+			BGEZ: begin if(!A[31]) Temp_ALUResult <= 32'h1; end 
+			BLEZ: begin if(!(A[31] || (A == 0))) Temp_ALUResult <= 32'h1; end
+			BLTZ: begin if(!(A[31])) Temp_ALUResult <= 32'h1; end
+			BNE: begin if(!(A != B)) Temp_ALUResult <= 32'h1; end
 			// Complex Operations
 			
 			MTHI: Temp_64bit_ALUResult[63:32] = $signed(A); 
