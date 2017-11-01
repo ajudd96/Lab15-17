@@ -5,7 +5,7 @@ module Control(
                Op, Funct, /*InstructionBit_6, InstructionBit_9, InstructionBit_21,*/  rt, 
               Branch, MemRead, MemtoReg, MemWrite,
               // output signals
-                RegDst, ALUSrc2, RegWrite, SignExt, Jump, /*CondMov, ALUSrc1,*/
+                RegDst, ALUSrc2, RegWrite, SignExt, Jump,/*CondMov, ALUSrc1,*/
                Link, Link31, WriteDst, 
                ALUControl, DMControl );    // output
 
@@ -78,17 +78,13 @@ module Control(
         // ADDU | 011111
         // LUI  | 100000
 
-output reg [2:0] DMControl; 
-        // Op   | 'DMControl' value
+output reg [1:0] DMControl; 
+        // 'DMControl' value | Operation
         // ==========================
-        // lw   | 000
-        // sw   | 001
-        // lb   | 010
-        // sb   | 011
-        // lh   | 100
-        // sh   | 101 
-        // n/a  | 110
-        // n/a  | 111
+        // 00   | Word mode
+        // 01   | Half-word mode
+        // 10   | Byte-mode
+        // 11   | n/a
 
                 /* OP Field codes */
     parameter 	RTYPE = 'b000000, SW = 'b101011, SB = 'b101000, SH = 'b101001,
@@ -120,7 +116,7 @@ output reg [2:0] DMControl;
           RegWrite = 0;  
           SignExt = 0;   
           Jump <= 0;
-          DMControl <= 'b000;
+          DMControl <= 'b00;
           WriteDst = 'b00;
     
     end
@@ -272,7 +268,7 @@ output reg [2:0] DMControl;
                         Jump <= 0;
                         CondMov <= 0;
                         ALUControl <= 'b001010;
-                        DMControl <= 'b000;
+                        DMControl <= 'b00;
                         WriteDst <= 'b00;
                     end
                     MTLO: begin
@@ -288,7 +284,7 @@ output reg [2:0] DMControl;
                         Jump <= 0;
                         CondMov <= 0;
                         ALUControl <= 'b001011;
-                        DMControl <= 'b000;
+                        DMControl <= 'b00;
                         WriteDst <= 'b00;
                     end
                     MFHI: begin
@@ -304,7 +300,7 @@ output reg [2:0] DMControl;
                         Jump <= 0;
                         CondMov <= 0;
                         ALUControl <= 'b001100;
-                        DMControl <= 'b000;
+                        DMControl <= 'b00;
                         WriteDst <= 'b00;
                     end
                     MFLO: begin
@@ -320,7 +316,7 @@ output reg [2:0] DMControl;
                         Jump <= 0;
                         CondMov <= 0;
                         ALUControl <= 'b001101;
-                        DMControl <= 'b000;
+                        DMControl <= 'b00;
                         WriteDst <= 'b00;
                     end
                     /*SLL: begin
@@ -509,7 +505,7 @@ output reg [2:0] DMControl;
                         Jump <= 1;
                         //CondMov <= 0;
                         ALUControl <= 'b000000;  // don't care
-                        DMControl <= 'b000;     // don't care
+                        DMControl <= 'b00;     // don't care
                         WriteDst <= 'b00;       // don't care 
                     // we need R[rs] to get to PC, using a mux
 
@@ -526,7 +522,7 @@ output reg [2:0] DMControl;
                         Jump <= 0;
                         //CondMov <= 0;
                         ALUControl <= 'b000000;
-                        DMControl <= 'b000;
+                        DMControl <= 'b00;
                     end
             endcase
         	end  
@@ -545,7 +541,7 @@ output reg [2:0] DMControl;
         		Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000010;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
         	LB: begin 	
@@ -561,7 +557,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000010;
-                DMControl <= 'b010;
+                DMControl <= 'b10;  // byte-mode
                 WriteDst <= 'b00;
         	end
         	LH: begin 	
@@ -577,7 +573,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000010;
-                DMControl <= 'b100;
+                DMControl <= 'b01;  // half-word mode
                 WriteDst <= 'b00;
         	end
         	LUI: begin
@@ -593,7 +589,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b100000;  // must shift left by 16 and cocatenate 16 0's to the right side
-                DMControl <= 'b000; // don't care
+                DMControl <= 'b00; // don't care
                 WriteDst <= 'b00;
         	end
         // Store Functions (diferences handled in DMControl)	
@@ -610,7 +606,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000010;
-                DMControl <= 'b001;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
         	SB: begin
@@ -626,7 +622,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000010;
-                DMControl <= 'b011;
+                DMControl <= 'b10;  // byte-mode
                 WriteDst <= 'b00;
         	end
         	SH: begin
@@ -642,7 +638,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000010;
-                DMControl <= 'b101;
+                DMControl <= 'b01;  // half-word mode
                 WriteDst <= 'b00;
         	end
         // Branch instructions 
@@ -659,7 +655,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b010000;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
         	BNE: begin
@@ -675,7 +671,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b010101;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
         	BGTZ: begin
@@ -691,7 +687,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b010001;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
         	BLEZ: begin
@@ -707,7 +703,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b010011;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
         	BLTZ_BGEZ: begin
@@ -722,7 +718,7 @@ output reg [2:0] DMControl;
                 SignExt <= 1;
                 Jump <= 0;
                 //CondMov <= 0;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
 
                 if(rt <= 'b00001) // BGEZ
@@ -744,7 +740,7 @@ output reg [2:0] DMControl;
                 Jump <= 1;
                 //CondMov <= 0;
                 ALUControl <= 'b000000;  // don't care
-                DMControl <= 'b000;     // don't care
+                DMControl <= 'b00;     // don't care
                 WriteDst <= 'b00;       // don't care
         	end
         	JAL: begin
@@ -762,7 +758,7 @@ output reg [2:0] DMControl;
                 //Link31 <= 1;
                 //CondMov <= 0;
                 ALUControl <= 'b000000;  // don't care
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b01;   // uses $31
         	end
 
@@ -780,7 +776,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;    
                 ALUControl <= 'b000010;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
 
@@ -951,7 +947,7 @@ output reg [2:0] DMControl;
                 Jump <= 0;
                 //CondMov <= 0;
                 ALUControl <= 'b000000;
-                DMControl <= 'b000;
+                DMControl <= 'b00;
                 WriteDst <= 'b00;
             end
         endcase
