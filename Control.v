@@ -124,18 +124,18 @@ output reg [1:0] DMControl;
           RegWrite = 0;  
           SignExt = 0;   
           DMControl <= 'b00;
-          WriteDst = 'b00;
-          JumpMux = 'b00;    
+          WriteDst <= 'b00;
+          JumpMux <= 'b00;    
     end
 
 
-    always @(Op, Funct, /*InstructionBit_6, InstructionBit_9, InstructionBit_21*/) begin
+    always @(Op, Funct, InstructionBit_6, InstructionBit_9, InstructionBit_21, rt) begin
   
 
         case(Op)
         	RTYPE: begin
                 case(Funct)
-                   /* ADD: begin
+                    ADD: begin
                         RegDst <= 1;
                         Branch <= 0;
                         MemRead <= 0;
@@ -151,6 +151,7 @@ output reg [1:0] DMControl;
                         WriteDst <= 'b00;
                         JumpMux <= 'b00;
                     end
+                    /*
                       ADDU: begin
                            RegDst <= 1;
                            Branch <= 0;
@@ -290,7 +291,7 @@ output reg [1:0] DMControl;
                         ALUSrc1 <= 0;
                         RegWrite <= 1;   
                         SignExt <= 0;   // don't care
-                        JumpMux = 'b00;
+                        JumpMux <= 'b00;
                         CondMov <= 0;
                         ALUControl <= 'b001010;
                         DMControl <= 'b00;
@@ -306,7 +307,7 @@ output reg [1:0] DMControl;
                         ALUSrc1 <= 0;
                         RegWrite <= 1;   
                         SignExt <= 0;   // don't care
-                        JumpMux = 'b00;
+                        JumpMux <= 'b00;
                         CondMov <= 0;
                         ALUControl <= 'b001011;
                         DMControl <= 'b00;
@@ -322,7 +323,7 @@ output reg [1:0] DMControl;
                         ALUSrc1 <= 0;
                         RegWrite <= 1;   
                         SignExt <= 0;   // don't care
-                        JumpMux = 'b00;
+                        JumpMux <= 'b00;
                         CondMov <= 0;
                         ALUControl <= 'b001100;
                         DMControl <= 'b00;
@@ -338,7 +339,7 @@ output reg [1:0] DMControl;
                         ALUSrc1 <= 0;
                         RegWrite <= 1;   
                         SignExt <= 0;   // don't care
-                        JumpMux = 'b00;
+                        JumpMux <= 'b00;
                         CondMov <= 0;
                         ALUControl <= 'b001101;
                         DMControl <= 'b00;
@@ -557,8 +558,9 @@ output reg [1:0] DMControl;
                         DMControl <= 'b00;     // don't care
                         WriteDst <= 'b00;       // don't care 
                     // we need R[rs] to get to PC, using a mux
+                    end
 
-                    default begin       // AND instruction signals
+                    default: begin       // AND instruction signals
                         RegDst <= 1;
                         Branch <= 0;
                         MemRead <= 0;
@@ -568,10 +570,11 @@ output reg [1:0] DMControl;
                         ALUSrc1 <= 0;
                         RegWrite <= 1;   
                         SignExt <= 0;   // don't care
-                        JumpMux = 'b00;
+                        JumpMux <= 'b00;
                         CondMov <= 0;
                         ALUControl <= 'b000000;
                         DMControl <= 'b00;
+                        WriteDst <= 'b00;
                     end
             endcase
         	end  
@@ -587,7 +590,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
         		RegWrite <= 1;
         		SignExt <= 1;
-        		JumpMux = 'b00;
+        		JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000010;
                 DMControl <= 'b00;
@@ -603,7 +606,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 1;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000010;
                 DMControl <= 'b10;  // byte-mode
@@ -619,40 +622,41 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 1;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000010;
                 DMControl <= 'b01;  // half-word mode
                 WriteDst <= 'b00;
         	end
+
         	LUI: begin
                 RegDst <= 0;
                 Branch <= 0;
                 MemRead <= 1;
-                MemtoReg <= 0;  // WriteData from ALUResult
+                MemtoReg <= 1;  // WriteData from ALUResult
                 MemWrite <= 0;
                 ALUSrc2 <= 1;  // using offset value (immExt)
                 ALUSrc1 <= 0;
                 RegWrite <= 1;
                 SignExt <= 1;   // don't care
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b100000;  // must shift left by 16 and cocatenate 16 0's to the right side
                 DMControl <= 'b00; // don't care
                 WriteDst <= 'b00;
         	end
-        // Store Functions (diferences handled in DMControl)	
+        // Store Functions 
         	SW: begin
                 RegDst <= 0;
                 Branch <= 0;
                 MemRead <= 0;
                 MemtoReg <= 0;  // WriteData from ALUResult
-                MemWrite <= 0;
+                MemWrite <= 1;
                 ALUSrc2 <= 1;  // using offset value (immExt)
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000010;
                 DMControl <= 'b00;
@@ -663,12 +667,12 @@ output reg [1:0] DMControl;
                 Branch <= 0;
                 MemRead <= 0;
                 MemtoReg <= 0;  // WriteData from ALUResult
-                MemWrite <= 0;
+                MemWrite <= 1;
                 ALUSrc2 <= 1;  // using offset value (immExt)
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000010;
                 DMControl <= 'b10;  // byte-mode
@@ -679,12 +683,12 @@ output reg [1:0] DMControl;
                 Branch <= 0;
                 MemRead <= 0;
                 MemtoReg <= 0;  // WriteData from ALUResult
-                MemWrite <= 0;
+                MemWrite <= 1;
                 ALUSrc2 <= 1;  // using offset value (immExt)
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000010;
                 DMControl <= 'b01;  // half-word mode
@@ -701,7 +705,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b010000;
                 DMControl <= 'b00;
@@ -717,7 +721,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b010101;
                 DMControl <= 'b00;
@@ -733,7 +737,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b010001;
                 DMControl <= 'b00;
@@ -749,7 +753,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b010011;
                 DMControl <= 'b00;
@@ -765,13 +769,13 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 0;
                 SignExt <= 1;
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 DMControl <= 'b00;
                 WriteDst <= 'b00;
 
-                if(rt <= 'b00001) // BGEZ
-                ALUControl <= 'b010000;
+                if(rt == 'b00001) // BGEZ
+                ALUControl <= 'b010010;
                 else              // BLTZ
                 ALUControl <= 'b010100;
         	end
@@ -820,7 +824,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 1;   
                 SignExt <= 1;   
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;    
                 ALUControl <= 'b000010;
                 DMControl <= 'b00;
@@ -860,7 +864,7 @@ output reg [1:0] DMControl;
                 DMControl <= 'b00;
                 WriteDst <= 'b00;
         	end
-
+*/
         	ORI: begin
         		RegDst <= 0;
                 Branch <= 0;
@@ -871,13 +875,13 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 1;   
                 SignExt <= 0;   // 16bit immediate is 0 extended   
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;    
                 ALUControl <= 'b000001;
                 DMControl <= 'b00;
                 WriteDst <= 'b00;
                 end
-
+/*
         	XORI: begin
         		RegDst <= 0;
                 Branch <= 0;
@@ -1008,7 +1012,7 @@ output reg [1:0] DMControl;
                 ALUSrc1 <= 0;
                 RegWrite <= 1;   
                 SignExt <= 0;   // don't care
-                JumpMux = 'b00;
+                JumpMux <= 'b00;
                 CondMov <= 0;
                 ALUControl <= 'b000000;
                 DMControl <= 'b00;

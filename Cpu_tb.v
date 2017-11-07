@@ -6,9 +6,9 @@
 module Cpu_tb();
 
 reg Clk, reset;
-wire [31:0] PCResult, EX_ALUResult, Hi, Lo, WB_ALUResult;
+wire [31:0] PCResult, EX_ALUResult, Hi, Lo, WB_ALUResult, WB_MemtoRegMuxResult;
 //module CPU(Clk, reset, PCResult, EX_ALUResult, Hi, Lo);
-CPU Cpu1(Clk, reset, PCResult, EX_ALUResult, Hi, Lo, WB_ALUResult);
+CPU Cpu1(Clk, reset, PCResult, EX_ALUResult, Hi, Lo, WB_ALUResult, WB_MemtoRegMuxResult);
 
 initial begin
 		Clk <= 1'b0;

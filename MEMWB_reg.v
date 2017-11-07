@@ -15,7 +15,7 @@ module MEMWB_reg(
 					MEM_ZeroFlag,
 					MEM_ALUResult,
 					MEM_WriteRegister,
-					MEM_MemData,
+					MEM_DMResult,
 					
 
 //		outputs
@@ -23,23 +23,24 @@ module MEMWB_reg(
 // 				Control lines;
 					WB_RegWrite,
 				    WB_CondMov,
+				    WB_MemtoReg,
 				    
 //				Data lines;	
                     WB_ZeroFlag,			
 					WB_ALUResult,
 					WB_WriteRegister,
-					WB_MemData,
-					WB_MemtoReg );
+					WB_DMResult
+ );
 
 input Clk;
 input MEM_RegWrite, MEM_ZeroFlag;
 input wire MEM_CondMov, MEM_MemtoReg;
-input wire [31:0] MEM_ALUResult, MEM_MemData;
+input wire [31:0] MEM_ALUResult, MEM_DMResult;
 input wire [4:0]  MEM_WriteRegister; 
 
 output reg WB_RegWrite, WB_ZeroFlag;
 output reg WB_CondMov, WB_MemtoReg;
-output reg [31:0] WB_ALUResult, WB_MemData;
+output reg [31:0] WB_ALUResult, WB_DMResult;
 output reg [4:0]  WB_WriteRegister;
 
 initial begin
@@ -58,7 +59,7 @@ always @(posedge Clk) begin
 	// Data
 	WB_ALUResult <= MEM_ALUResult;
 	WB_WriteRegister <= MEM_WriteRegister;
-	WB_MemData <= MEM_MemData;
+	WB_DMResult <= MEM_DMResult;
 
 end
 endmodule

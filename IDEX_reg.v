@@ -70,10 +70,8 @@ input wire [4:0] ID_rt, ID_rd;
 output reg EX_RegWrite, EX_CondMov, EX_RegDst, EX_ALUSrc1, EX_ALUSrc2, EX_MemtoReg, EX_MemWrite, EX_MemRead, EX_Branch;
 output reg [1:0] EX_WriteDst, EX_JumpMux, EX_DMControl;
 output reg [5:0] EX_ALUOp;
-output reg [31:0] EX_PCAddResult, EX_JumpAdress, EX_ReadData1, EX_ReadData2, EX_immExt, EX_sa;
+output reg [31:0] EX_PCAddResult, EX_JumpAddress, EX_ReadData1, EX_ReadData2, EX_immExt, EX_sa;
 output reg [4:0] EX_rt, EX_rd;
-
-
 
 always @(posedge Clk) begin
 	
@@ -93,7 +91,7 @@ always @(posedge Clk) begin
     EX_DMControl <= ID_DMControl;
 	// Data
 	EX_PCAddResult <= ID_PCAddResult;
-	EX_JumpAdress <= ID_JumpAddress;
+	EX_JumpAddress <= ID_JumpAddress;
 	EX_ReadData1 <= ID_ReadData1;
 	EX_ReadData2 <= ID_ReadData2;
 	EX_immExt <= ID_immExt;
