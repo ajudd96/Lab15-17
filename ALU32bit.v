@@ -39,7 +39,7 @@
 // MFLO | 001101
 // MADD | 001110
 // MSUB | 001111
-// BEQ  | 010000
+// BEQ  | 010000 ----- Not In
 // BGEZ | 010010
 // BLEZ | 010011
 // BLTZ | 010100
@@ -81,9 +81,7 @@ module ALU32Bit(ALUControl, A, B, Temp_ALUResult, Temp_Zero, Hi, Lo, Temp_64bit_
 	parameter MTHI = 'b001010, MTLO = 'b001011,
               MFHI = 'b001100, MFLO = 'b001101,
               MADD = 'b001110, MSUB = 'b001111;
-	// Comparison
-	parameter BEQ = 'b010000, BGTZ = 'b010001, BGEZ = 'b010010,
-	          BLEZ = 'b010011, BLTZ = 'b010100, BNE = 'b010101;
+
 	// More Operations
 	parameter SEB = 'b010110, SEH = 'b010111, ROTR = 'b011000,
               MOVN = 'b011001, MOVZ = 'b011010, SRA = 'b011011,
@@ -101,12 +99,12 @@ module ALU32Bit(ALUControl, A, B, Temp_ALUResult, Temp_Zero, Hi, Lo, Temp_64bit_
         case(ALUControl) 
 			// Originl Operations
             ADD: begin 
-                        Temp_ALUResult = $signed(A) + $signed(B);
-                        if (Temp_ALUResult == 0) begin
-                            Temp_Zero <= 1;
-                        end 
-                        else if (Temp_ALUResult == 1) Temp_Zero <= 0;
-                        end
+				Temp_ALUResult = $signed(A) + $signed(B);
+				if (Temp_ALUResult == 0) begin
+					Temp_Zero <= 1;
+				end 
+				else if (Temp_ALUResult == 1) Temp_Zero <= 0;
+				end
             ADDU: Temp_ALUResult = $unsigned(A) + $unsigned(B);
 			SUB: Temp_ALUResult = $signed(A) - $signed(B);
             AND: Temp_ALUResult = A & B;
@@ -125,69 +123,6 @@ module ALU32Bit(ALUControl, A, B, Temp_ALUResult, Temp_Zero, Hi, Lo, Temp_64bit_
 			// (<< and >> inserts zeros)
             SLL: Temp_ALUResult = B << A;
             SRL: Temp_ALUResult = B >> A;
-			
-			// Comparison - 
-			//			ALUResult = 1 when branch condition not met
-			BEQ: begin 
-			             if(!(A == B)) begin
-			                 Temp_ALUResult = 32'h1; 
-			                 Temp_Zero = 0;         
-			                end
-			              else begin
-			                 Temp_ALUResult = 32'h0; 
-			                 Temp_Zero = 1; 
-			             end
-			           end
-			BGTZ: begin 
-                            if(A[31] || (A == 0)) begin
-                                Temp_ALUResult = 32'h1; 
-                                Temp_Zero = 0;         
-                               end
-                             else if (!(A[31] ) ) begin
-                                Temp_ALUResult = 32'h0; 
-                                Temp_Zero = 1; 
-                            end
-                          end
-			BGEZ:begin 
-                          if(A[31]) begin
-                              Temp_ALUResult = 32'h1; 
-                              Temp_Zero = 0;         
-                             end
-                           else begin
-                              Temp_ALUResult = 32'h0; 
-                              Temp_Zero = 1; 
-                          end
-                        end 
-			BLEZ: begin 
-                              if(!(A[31] || (A == 0))) begin
-                                  Temp_ALUResult = 32'h1; 
-                                  Temp_Zero = 0;         
-                                 end
-                               else begin
-                                  Temp_ALUResult = 32'h0; 
-                                  Temp_Zero = 1; 
-                              end
-                            end
-			BLTZ: begin 
-                              if(!(A[31])) begin
-                                  Temp_ALUResult = 32'h1; 
-                                  Temp_Zero = 0;         
-                                 end
-                               else begin
-                                  Temp_ALUResult = 32'h0; 
-                                  Temp_Zero = 1; 
-                              end
-                            end
-			BNE: begin 
-                              if(!(A != B))begin
-                                  Temp_ALUResult = 32'h1; 
-                                  Temp_Zero = 0;         
-                                 end
-                               else begin
-                                  Temp_ALUResult = 32'h0; 
-                                  Temp_Zero = 1; 
-                              end
-                            end
 			// Complex Operations
 			
 			MTHI: Temp_64bit_ALUResult[63:32] = $signed(A); 
@@ -213,7 +148,5 @@ module ALU32Bit(ALUControl, A, B, Temp_ALUResult, Temp_Zero, Hi, Lo, Temp_64bit_
 			
             default: Temp_ALUResult = 32'b0;
         endcase
-        
-       //if(Temp_ALUResult == 0) Temp_Zero <= 1;
 	end
 endmodule
